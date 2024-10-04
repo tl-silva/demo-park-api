@@ -1,5 +1,7 @@
 package com.mballem.demoparkapi.web.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,12 @@ public class UserController {
 	public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user){
 		User newUser = userService.editPassword(id, user.getPassword());
 		return ResponseEntity.ok(newUser);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<User>> getAll(){
+		List<User> users = userService.findAll();
+		return ResponseEntity.ok(users);
 	}
 	
 }
