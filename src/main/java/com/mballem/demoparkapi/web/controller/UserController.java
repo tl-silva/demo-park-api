@@ -3,6 +3,7 @@ package com.mballem.demoparkapi.web.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,5 +34,10 @@ public class UserController {
 		return ResponseEntity.ok(newUser);
 	}
 	
-
+	@PatchMapping("/{id}")
+	public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user){
+		User newUser = userService.editPassword(id, user.getPassword());
+		return ResponseEntity.ok(newUser);
+	}
+	
 }

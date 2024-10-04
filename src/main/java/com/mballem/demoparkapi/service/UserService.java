@@ -27,4 +27,11 @@ public class UserService {
 		
 	}
 
+	@Transactional
+	public User editPassword(Long id, String password) {
+		User user = findById(id);
+		user.setPassword(password);
+		return user;
+	}
+
 }
