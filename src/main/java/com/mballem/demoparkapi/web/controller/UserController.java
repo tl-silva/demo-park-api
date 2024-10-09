@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mballem.demoparkapi.entity.User;
 import com.mballem.demoparkapi.service.UserService;
+import com.mballem.demoparkapi.web.dto.UserCreateDto;
+import com.mballem.demoparkapi.web.dto.UserResponseDto;
+import com.mballem.demoparkapi.web.dto.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +28,9 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping
-	public ResponseEntity<User> create(@RequestBody User user){
-		User newUser = userService.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+	public ResponseEntity<UserResponseDto> create(@RequestBody UserCreateDto user){
+		User newUser = userService.save(UserMapper.toUser(user));
+		return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(newUser));
 	}
 	
 	@GetMapping("/{id}")
