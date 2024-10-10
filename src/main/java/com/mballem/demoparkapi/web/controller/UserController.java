@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mballem.demoparkapi.entity.User;
 import com.mballem.demoparkapi.service.UserService;
 import com.mballem.demoparkapi.web.dto.UserCreateDto;
+import com.mballem.demoparkapi.web.dto.UserPasswordDto;
 import com.mballem.demoparkapi.web.dto.UserResponseDto;
 import com.mballem.demoparkapi.web.dto.mapper.UserMapper;
 
@@ -40,9 +41,9 @@ public class UserController {
 	}
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user){
-		User newUser = userService.editPassword(id, user.getPassword());
-		return ResponseEntity.ok(newUser);
+	public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto userPasswordDto){
+		User newUser = userService.editPassword(id, userPasswordDto.getCurrentPassword(), userPasswordDto.getNewPassword(), userPasswordDto.getConfirmPassword());
+		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping
