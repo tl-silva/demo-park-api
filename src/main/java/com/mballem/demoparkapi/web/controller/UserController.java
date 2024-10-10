@@ -19,6 +19,7 @@ import com.mballem.demoparkapi.web.dto.UserPasswordDto;
 import com.mballem.demoparkapi.web.dto.UserResponseDto;
 import com.mballem.demoparkapi.web.dto.mapper.UserMapper;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping
-	public ResponseEntity<UserResponseDto> create(@RequestBody UserCreateDto user){
+	public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto user){
 		User newUser = userService.save(UserMapper.toUser(user));
 		return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(newUser));
 	}
