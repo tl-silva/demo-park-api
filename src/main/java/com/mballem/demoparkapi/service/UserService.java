@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.User;
+import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
 import com.mballem.demoparkapi.repository.UserRepository;
 
@@ -29,7 +30,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public User findById(Long id) {
 		return userRepository.findById(id).orElseThrow(
-				() -> new RuntimeException("User not found.")
+				() -> new EntityNotFoundException(String.format("User id=%s not found. ", id))
 		);
 		
 	}
