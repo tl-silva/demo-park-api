@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.User;
+import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
 import com.mballem.demoparkapi.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,11 @@ public class UserService {
 
 	@Transactional
 	public User save(User user) {
-		return userRepository.save(user);
+		try {
+			return userRepository.save(user);
+		} catch (org.springframework.dao.DataIntegrityViolationException ex) {
+			throw new UsernameUniqueViolationException(String.format("Username [%s] already registered", user.getUsername()));
+		}
 	}
 
 	@Transactional(readOnly = true)
