@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.User;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
+import com.mballem.demoparkapi.exception.PasswordInvalidException;
 import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
 import com.mballem.demoparkapi.repository.UserRepository;
 
@@ -38,12 +39,12 @@ public class UserService {
 	@Transactional
 	public User editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
 		if (!newPassword.equals(confirmPassword)) {
-			throw new RuntimeException("The new password do not match with password confirmation.");
+			throw new PasswordInvalidException("The new password do not match with password confirmation.");
 		}
 		
 		User user = findById(id);
 		if (!user.getPassword().equals(currentPassword)) {
-			throw new RuntimeException("Your password do not match.");
+			throw new PasswordInvalidException("Your password do not match.");
 		}
 		
 		user.setPassword(newPassword);
