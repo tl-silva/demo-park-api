@@ -18,10 +18,17 @@ import com.mballem.demoparkapi.web.dto.UserCreateDto;
 import com.mballem.demoparkapi.web.dto.UserPasswordDto;
 import com.mballem.demoparkapi.web.dto.UserResponseDto;
 import com.mballem.demoparkapi.web.dto.mapper.UserMapper;
+import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Users", description = "Contains all operations related to resources for registering, editing and reading a User.")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/users")
@@ -29,6 +36,16 @@ public class UserController {
 	
 	private final UserService userService;
 	
+	@Operation(summary = "Create a new User", description = "Resource to create a new User",
+			responses = {
+					@ApiResponse(responseCode = "201", description = "Resource created successfully",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+					@ApiResponse(responseCode = "409", description = "Username [email] already registered in the system",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+					@ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+			
+			})
 	@PostMapping
 	public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto user){
 		User newUser = userService.save(UserMapper.toUser(user));
