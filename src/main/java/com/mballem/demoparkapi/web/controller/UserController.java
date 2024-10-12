@@ -57,7 +57,7 @@ public class UserController {
 					@ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
 					@ApiResponse(responseCode = "404", description = "Resource not found",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+						content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 			
 			})
 	@GetMapping("/{id}")
@@ -66,6 +66,16 @@ public class UserController {
 		return ResponseEntity.ok(UserMapper.toDto(newUser));
 	}
 	
+	@Operation(summary = "Update password", description = "Update registered User password",
+			responses = {
+					@ApiResponse(responseCode = "204", description = "Password updated successfully",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+					@ApiResponse(responseCode = "400", description = "Password does not match",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+					@ApiResponse(responseCode = "404", description = "Resource not found",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+			
+			})
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UserPasswordDto userPasswordDto){
 		User newUser = userService.editPassword(id, userPasswordDto.getCurrentPassword(), userPasswordDto.getNewPassword(), userPasswordDto.getConfirmPassword());

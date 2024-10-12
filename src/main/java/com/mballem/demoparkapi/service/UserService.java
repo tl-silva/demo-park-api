@@ -39,12 +39,12 @@ public class UserService {
 	@Transactional
 	public User editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
 		if (!newPassword.equals(confirmPassword)) {
-			throw new PasswordInvalidException("The new password do not match with password confirmation.");
+			throw new PasswordInvalidException("The new password does not match with password confirmation.");
 		}
 		
 		User user = findById(id);
 		if (!user.getPassword().equals(currentPassword)) {
-			throw new PasswordInvalidException("Your password do not match.");
+			throw new PasswordInvalidException("Your password does not match.");
 		}
 		
 		user.setPassword(newPassword);
