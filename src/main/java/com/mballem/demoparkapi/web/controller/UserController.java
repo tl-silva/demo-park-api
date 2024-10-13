@@ -43,7 +43,7 @@ public class UserController {
 					@ApiResponse(responseCode = "409", description = "Username [email] already registered in the system",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 			
 			})
 	@PostMapping
@@ -57,7 +57,7 @@ public class UserController {
 					@ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
 					@ApiResponse(responseCode = "404", description = "Resource not found",
-						content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 			
 			})
 	@GetMapping("/{id}")
@@ -71,9 +71,9 @@ public class UserController {
 					@ApiResponse(responseCode = "204", description = "Password updated successfully",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
 					@ApiResponse(responseCode = "400", description = "Password does not match",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "404", description = "Resource not found",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 			
 			})
 	@PatchMapping("/{id}")
@@ -82,6 +82,11 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@Operation(summary = "List all users", description = "List all existing users",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "List of all registered users",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class)))
+			})
 	@GetMapping
 	public ResponseEntity<List<UserResponseDto>> getAll(){
 		List<User> users = userService.findAll();
