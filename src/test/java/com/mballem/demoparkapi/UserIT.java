@@ -1,5 +1,7 @@
 package com.mballem.demoparkapi;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -271,4 +273,19 @@ public class UserIT {
 		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
 
 	}
+
+	@Test
+	public void findUsers_WithoutAnyParams_ReturnListOfUsersWithStatus200() {
+		List<UserResponseDto> responseBody = testClient
+				.get()
+				.uri("/api/v1/users")
+				.exchange()
+				.expectStatus().isOk()
+				.expectBodyList(UserResponseDto.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.size()).isEqualTo(3);
+	}
+	
 }
