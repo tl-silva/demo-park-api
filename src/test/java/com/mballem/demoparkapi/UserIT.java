@@ -8,6 +8,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.mballem.demoparkapi.web.dto.UserCreateDto;
+import com.mballem.demoparkapi.web.dto.UserPasswordDto;
 import com.mballem.demoparkapi.web.dto.UserResponseDto;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
@@ -167,5 +168,107 @@ public class UserIT {
 		
 		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
 		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+	}
+
+	@Test
+	public void editPassword_WithValidData_ReturnStatus204() {
+		testClient
+				.patch()
+				.uri("/api/v1/users/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "123456", "123456"))
+				.exchange()
+				.expectStatus().isNoContent();
+				
+	}
+
+	@Test
+	public void editPassword_WithNonExistingId_ReturnErrorMessageWithStatus404() {
+		ErrorMessage responseBody = testClient
+				.patch()
+				.uri("/api/v1/users/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "123456", "123456"))
+				.exchange()
+				.expectStatus().isNotFound()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+	}
+	
+	@Test
+	public void editPassword_WithInvalidFields_ReturnErrorMessageWithStatus422() {
+
+		ErrorMessage responseBody = testClient
+				.patch()
+				.uri("/api/v1/users/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("", "", ""))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = testClient
+				.patch()
+				.uri("/api/v1/users/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("12345", "12345", "12345"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+		responseBody = testClient
+				.patch()
+				.uri("/api/v1/users/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("12345678", "12345678", "12345678"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+	}
+	
+	@Test
+	public void editPassword_WithInvalidPasswords_ReturnErrorMessageWithStatus400() {
+		ErrorMessage responseBody = testClient
+				.patch()
+				.uri("/api/v1/users/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "123456", "000000"))
+				.exchange()
+				.expectStatus().isEqualTo(400)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+		
+		responseBody = testClient
+				.patch()
+				.uri("/api/v1/users/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("000000", "123456", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(400)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+
 	}
 }
