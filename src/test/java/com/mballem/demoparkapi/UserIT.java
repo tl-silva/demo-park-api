@@ -38,7 +38,7 @@ public class UserIT {
 	}
 	
 	@Test
-	public void createUser_WithInvalidUsername_ReturnErrorMessageStatus422() {
+	public void createUser_WithInvalidUsername_ReturnErrorMessageWithStatus422() {
 		ErrorMessage responseBody = testClient
 				.post()
 				.uri("/api/v1/users")
@@ -81,7 +81,7 @@ public class UserIT {
 	}
 	
 	@Test
-	public void createUser_WithInvalidPassword_ReturnErrorMessageStatus422() {
+	public void createUser_WithInvalidPassword_ReturnErrorMessageWithStatus422() {
 		ErrorMessage responseBody = testClient
 				.post()
 				.uri("/api/v1/users")
@@ -137,5 +137,35 @@ public class UserIT {
 		
 		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
 		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+	}
+	
+	@Test
+	public void findUser_WithExistingId_ReturnUserWithStatus200() {
+		UserResponseDto responseBody = testClient
+				.get()
+				.uri("/api/v1/users/100")
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(UserResponseDto.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(100);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getUsername()).isEqualTo("ebechara@email.com");
+		org.assertj.core.api.Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+	}
+	
+	@Test
+	public void findUser_WithNonExistingId_ReturnErrorMessageWithStatus404() {
+		ErrorMessage responseBody = testClient
+				.get()
+				.uri("/api/v1/users/0")
+				.exchange()
+				.expectStatus().isNotFound()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
 	}
 }
