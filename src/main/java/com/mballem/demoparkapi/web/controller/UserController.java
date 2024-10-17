@@ -21,6 +21,7 @@ import com.mballem.demoparkapi.web.dto.mapper.UserMapper;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -88,7 +89,7 @@ public class UserController {
 	@Operation(summary = "List all users", description = "List all existing users",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "List of all registered users",
-							content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class)))
+							content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class))))
 			})
 	@GetMapping
 	public ResponseEntity<List<UserResponseDto>> getAll(){

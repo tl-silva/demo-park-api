@@ -2,6 +2,7 @@ package com.mballem.demoparkapi.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
 	public User save(User user) {
 		try {
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			return userRepository.save(user);
 		} catch (org.springframework.dao.DataIntegrityViolationException ex) {
 			throw new UsernameUniqueViolationException(String.format("Username [%s] already registered", user.getUsername()));
@@ -43,11 +46,11 @@ public class UserService {
 		}
 		
 		User user = findById(id);
-		if (!user.getPassword().equals(currentPassword)) {
+		if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
 			throw new PasswordInvalidException("Your password does not match.");
 		}
 		
-		user.setPassword(newPassword);
+		user.setPassword(passwordEncoder.encode(newPassword));
 		return user;
 	}
 
