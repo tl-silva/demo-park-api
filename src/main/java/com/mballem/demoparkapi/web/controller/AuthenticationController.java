@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +15,6 @@ import com.mballem.demoparkapi.jwt.JwtUserDetailsService;
 import com.mballem.demoparkapi.web.dto.UserLoginDto;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class AuthenticationController {
 			
 			authenticationManager.authenticate(authenticationToken);
 			
-			JwtToken token = detailsService.getTokenAtuthenticated(dto.getUsername());
+			JwtToken token = detailsService.getTokenAuthenticated(dto.getUsername());
 			
 			return ResponseEntity.ok(token);
 		} catch (AuthenticationException ex) {

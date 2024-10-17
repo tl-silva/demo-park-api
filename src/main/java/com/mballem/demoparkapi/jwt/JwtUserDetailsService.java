@@ -18,11 +18,11 @@ public class JwtUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user  = userService.finByUsername(username);
+		User user  = userService.findByUsername(username);
 		return new JwtUserDetails(user);
 	}
 	
-	public JwtToken getTokenAtuthenticated(String username) {
+	public JwtToken getTokenAuthenticated(String username) {
 		User.Role role = userService.findRoleByUsername(username);
 		return JwtUtils.createToken(username, role.name().substring("ROLE_".length()));
 	}
