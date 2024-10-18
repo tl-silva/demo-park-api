@@ -3,8 +3,15 @@ package com.mballem.demoparkapi.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +25,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
 
 	@Id
@@ -35,15 +43,19 @@ public class User implements Serializable {
 	@Column(name = "role", nullable = false, length = 25)
 	private Role role = Role.ROLE_CLIENT;
 	
+	@CreatedDate
 	@Column(name = "created_date")
 	private LocalDateTime createdDate;
 	
+	@LastModifiedDate
 	@Column(name = "last_modified_date")
 	private LocalDateTime lastModifiedDate; 
 	
+	@CreatedBy
 	@Column(name = "created_by")
 	private String createdBy;
 	
+	@LastModifiedBy
 	@Column(name = "last_modified_by")
 	private String lastModifiedBy;
 	
