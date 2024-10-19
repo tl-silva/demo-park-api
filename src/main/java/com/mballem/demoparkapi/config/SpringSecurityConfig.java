@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.mballem.demoparkapi.jwt.JwtAuthenticationEntryPoint;
 import com.mballem.demoparkapi.jwt.JwtAuthorizationFilter;
 
 @EnableMethodSecurity
@@ -35,6 +36,8 @@ public class SpringSecurityConfig {
 						session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				).addFilterBefore(
 						jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
+				).exceptionHandling(ex -> ex
+						.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
 				).build();
 	}
 	
