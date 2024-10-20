@@ -356,6 +356,7 @@ public class UserIT {
 		List<UserResponseDto> responseBody = testClient
 				.get()
 				.uri("/api/v1/users")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
 				.exchange()
 				.expectStatus().isOk()
 				.expectBodyList(UserResponseDto.class)
