@@ -76,13 +76,10 @@ public class UserController {
 	@Operation(summary = "Update registered User password", description = "Request requires a Bearer Token. Restricted access to ADMIN | CLIENT.",
 			security = @SecurityRequirement(name = "security"),
 			responses = {
-					@ApiResponse(responseCode = "204", description = "Password updated successfully",
-							content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+					@ApiResponse(responseCode = "204", description = "Password updated successfully"),
 					@ApiResponse(responseCode = "400", description = "Password does not match",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "403", description = "User without permission to access this resource",
-							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-					@ApiResponse(responseCode = "404", description = "Resource not found",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "422", description = "Invalid or bad formatted fields",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
@@ -91,7 +88,7 @@ public class UserController {
 	@PatchMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT') AND (#id == authentication.principal.id)")
 	public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UserPasswordDto userPasswordDto){
-		User newUser = userService.editPassword(id, userPasswordDto.getCurrentPassword(), userPasswordDto.getNewPassword(), userPasswordDto.getConfirmPassword());
+			userService.editPassword(id, userPasswordDto.getCurrentPassword(), userPasswordDto.getNewPassword(), userPasswordDto.getConfirmPassword());
 		return ResponseEntity.noContent().build();
 	}
 	
