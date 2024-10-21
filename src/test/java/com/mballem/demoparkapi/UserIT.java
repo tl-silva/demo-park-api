@@ -23,7 +23,7 @@ public class UserIT {
 	WebTestClient testClient;
 	
 	@Test
-	public void createUser_WithValidUsernameAndPassword_ReturnUserCreatedWithStatus201() {
+	public void createUser_WithValidUsernameAndPassword_ReturnCreatedUserWithStatus201() {
 		UserResponseDto responseBody = testClient
 				.post()
 				.uri("/api/v1/users")
@@ -127,7 +127,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void createUser_WithRepeatedUsername_ReturnUserCreatedWithStatus409() {
+	public void createUser_WithRepeatedUsername_ReturnCreatedUserWithStatus409() {
 		ErrorMessage responseBody = testClient
 				.post()
 				.uri("/api/v1/users")
