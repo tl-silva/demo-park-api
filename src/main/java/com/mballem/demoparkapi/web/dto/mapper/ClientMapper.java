@@ -2,10 +2,10 @@ package com.mballem.demoparkapi.web.dto.mapper;
 
 import org.modelmapper.ModelMapper;
 
+import com.mballem.demoparkapi.entity.Client;
 import com.mballem.demoparkapi.web.dto.ClientCreateDto;
 import com.mballem.demoparkapi.web.dto.ClientResponseDto;
 
-import ch.qos.logback.core.net.server.Client;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
