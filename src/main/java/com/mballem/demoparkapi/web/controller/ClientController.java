@@ -36,11 +36,12 @@ public class ClientController {
 	private final ClientService clientService;
 	private final UserService userService;
 	
-	@Operation(summary = "Create a new Client", description = "Resource to create a new client linked to an already registered user",
+	@Operation(summary = "Create a new Client", description = "Resource to create a new client linked to an already registered user" +
+	"Request requires a Bearer Token. Restricted access to 'CLIENT' Role.",
 			responses = {
 					@ApiResponse(responseCode = "201", description = "Resource created successfully",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ClientResponseDto.class))),
-					@ApiResponse(responseCode = "409", description = "CLient [CPF] already registered in the system",
+					@ApiResponse(responseCode = "409", description = "Client [CPF] already registered in the system",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
@@ -59,6 +60,18 @@ public class ClientController {
 		
 	}
 	
+	@Operation(summary = "Find a Client", description = "Resource to find a client by id" +
+			"Request requires a Bearer Token. Restricted access to 'ADMIN' Role.",
+			responses = {
+					@ApiResponse(responseCode = "201", description = "Resource located successfully",
+							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ClientResponseDto.class))),
+					@ApiResponse(responseCode = "404", description = "Client not found",
+							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+					@ApiResponse(responseCode = "403", description = "Resource not allowed for Client profile",
+					content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+	
+			})
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<ClientResponseDto> getById(@PathVariable Long id){
 		Client client = clientService.findById(id);
