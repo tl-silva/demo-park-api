@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.Client;
 import com.mballem.demoparkapi.exception.CpfUniqueViolationException;
+import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.repository.ClientRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

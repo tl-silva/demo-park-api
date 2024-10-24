@@ -137,6 +137,38 @@ public class ClientIT {
 		org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10);
 		
 	}
+	
+	@Test
+	public void findClient_WithNonExistingIdByAdmin_ReturnErrorMessageWithStatus404() {
+		ErrorMessage responseBody = testClient
+				.get()
+				.uri("/api/v1/clients/0")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.exchange()
+				.expectStatus().isNotFound()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+		
+	}
+	
+	@Test
+	public void findClient_WithExistingIdByClient_ReturnErrorMessageWithStatus403() {
+		ErrorMessage responseBody = testClient
+				.get()
+				.uri("/api/v1/clients/10")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "nreis@email.com", "123456"))
+				.exchange()
+				.expectStatus().isForbidden()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+		
+	}
 
 	
 
