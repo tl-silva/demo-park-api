@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mballem.demoparkapi.entity.Client;
 import com.mballem.demoparkapi.jwt.JwtUserDetails;
+import com.mballem.demoparkapi.repository.projection.ClientProjection;
 import com.mballem.demoparkapi.service.ClientService;
 import com.mballem.demoparkapi.service.UserService;
 import com.mballem.demoparkapi.web.dto.ClientCreateDto;
 import com.mballem.demoparkapi.web.dto.ClientResponseDto;
+import com.mballem.demoparkapi.web.dto.PageableDto;
 import com.mballem.demoparkapi.web.dto.mapper.ClientMapper;
+import com.mballem.demoparkapi.web.dto.mapper.PageableMapper;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -82,9 +85,9 @@ public class ClientController {
 	
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Page<Client>> getAll(Pageable pageable){
-		Page<Client> clients = clientService.findAll(pageable);
-		return ResponseEntity.ok(clients);
+	public ResponseEntity<PageableDto> getAll(Pageable pageable){
+		Page<ClientProjection> clients = clientService.findAll(pageable);
+		return ResponseEntity.ok(PageableMapper.toDto(clients));
 	}
 
 }

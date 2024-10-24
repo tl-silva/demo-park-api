@@ -10,6 +10,7 @@ import com.mballem.demoparkapi.entity.Client;
 import com.mballem.demoparkapi.exception.CpfUniqueViolationException;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.repository.ClientRepository;
+import com.mballem.demoparkapi.repository.projection.ClientProjection;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,8 +38,8 @@ public class ClientService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<Client> findAll(Pageable pageable) {
-		return clientRepository.findAll(pageable);
+	public Page<ClientProjection> findAll(Pageable pageable) {
+		return clientRepository.findAllPageable(pageable);
 	}
 
 }
