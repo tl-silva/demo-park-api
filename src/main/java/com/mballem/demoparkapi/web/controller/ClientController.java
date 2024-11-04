@@ -2,6 +2,7 @@ package com.mballem.demoparkapi.web.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,10 +26,14 @@ import com.mballem.demoparkapi.web.dto.mapper.PageableMapper;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -43,6 +48,7 @@ public class ClientController {
 	
 	@Operation(summary = "Create a new Client", description = "Resource to create a new client linked to an already registered user" +
 	"Request requires a Bearer Token. Restricted access to 'CLIENT' Role.",
+			security = @SecurityRequirement(name = "security"),
 			responses = {
 					@ApiResponse(responseCode = "201", description = "Resource created successfully",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ClientResponseDto.class))),
@@ -67,6 +73,7 @@ public class ClientController {
 	
 	@Operation(summary = "Find a Client", description = "Resource to find a client by id" +
 			"Request requires a Bearer Token. Restricted access to 'ADMIN' Role.",
+			security = @SecurityRequirement(name = "security"),
 			responses = {
 					@ApiResponse(responseCode = "201", description = "Resource located successfully",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ClientResponseDto.class))),
@@ -83,9 +90,35 @@ public class ClientController {
 		return ResponseEntity.ok(ClientMapper.toDto(client));
 	}
 	
+	@Operation(summary = "Retrieve a list of Clients",
+			description = "Request requires a Bearer Token. Restricted access to 'ADMIN' Role.",
+			security = @SecurityRequirement(name = "security"),
+			parameters = {
+					@Parameter(in = QUERY, name = "page",
+							content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
+							description = "Represents the page returned"
+					),
+					@Parameter(in = QUERY, name = "size",
+							content = @Content(schema = @Schema(type = "integer", defaultValue = "20")),
+							description = "Represents the total number of elements per page"
+			        ),
+					@Parameter(in = QUERY, name = "sort", hidden = true,
+							array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "id,asc")),
+							description = "Represents the sorting of results. Multiple acceptance criteria are supported.")		
+			},
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Resource located successfully",
+							content = @Content(mediaType = "application/json;charset=UTF-8",
+									schema = @Schema(implementation = ClientResponseDto.class))
+					),
+					@ApiResponse(responseCode = "403", description = "Resource not allowed for Client profile",
+							content = @Content(mediaType = "application/json;charset=UTF-8",
+									schema = @Schema(implementation = ErrorMessage.class))),
+	
+			})
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<PageableDto> getAll(Pageable pageable){
+	public ResponseEntity<PageableDto> getAll(@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"name"}) Pageable pageable){
 		Page<ClientProjection> clients = clientService.findAll(pageable);
 		return ResponseEntity.ok(PageableMapper.toDto(clients));
 	}
