@@ -9,6 +9,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.mballem.demoparkapi.web.dto.ClientCreateDto;
 import com.mballem.demoparkapi.web.dto.ClientResponseDto;
+import com.mballem.demoparkapi.web.dto.PageableDto;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -168,6 +169,53 @@ public class ClientIT {
 		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
 		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
 		
+	}
+	
+	@Test
+	public void findClients_WithAdminPagination_ReturnClientsWithStatus200() {
+		PageableDto responseBody = testClient
+				.get()
+				.uri("/api/v1/clients")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(PageableDto.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(2);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(1);
+		
+		responseBody = testClient
+				.get()
+				.uri("/api/v1/clients?size=1&page=1")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(PageableDto.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+	}
+	
+	@Test
+	public void findClients_WithClientPagination_ReturnErrorMessageWithStatus403() {
+		ErrorMessage responseBody = testClient
+				.get()
+				.uri("/api/v1/clients")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "nreis@email.com", "123456"))
+				.exchange()
+				.expectStatus().isForbidden()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+
 	}
 
 }
