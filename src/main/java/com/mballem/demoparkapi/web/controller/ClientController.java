@@ -57,7 +57,7 @@ public class ClientController {
 					@ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "403", description = "Resource not allowed for Admin profile",
-					content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
 	
 			})
 	@PostMapping
@@ -80,7 +80,7 @@ public class ClientController {
 					@ApiResponse(responseCode = "404", description = "Client not found",
 							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "403", description = "Resource not allowed for Client profile",
-					content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+							content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
 	
 			})
 	@GetMapping("/{id}")
@@ -123,6 +123,19 @@ public class ClientController {
 		return ResponseEntity.ok(PageableMapper.toDto(clients));
 	}
 	
+	@Operation(summary = "Retrieve authenticated client data",
+			description = "Request requires a Bearer Token. Restricted access to 'CLIENT' Role.",
+			security = @SecurityRequirement(name = "security"),
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Resource successfully retrieved",
+							content = @Content(mediaType = "application/json;charset=UTF-8",
+									schema = @Schema(implementation = ClientResponseDto.class))
+					),
+					@ApiResponse(responseCode = "403", description = "Resource not allowed for Admin profile",
+							content = @Content(mediaType = "application/json;charset=UTF-8",
+									schema = @Schema(implementation = ErrorMessage.class))),
+	
+			})
 	@GetMapping("/details")
 	@PreAuthorize("hasRole('CLIENT')")
 	public ResponseEntity<ClientResponseDto> getDetails(@AuthenticationPrincipal JwtUserDetails userDetails){
