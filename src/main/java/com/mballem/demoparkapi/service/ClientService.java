@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mballem.demoparkapi.entity.Client;
 import com.mballem.demoparkapi.exception.CpfUniqueViolationException;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
+import com.mballem.demoparkapi.jwt.JwtUserDetails;
 import com.mballem.demoparkapi.repository.ClientRepository;
 import com.mballem.demoparkapi.repository.projection.ClientProjection;
 
@@ -40,6 +41,11 @@ public class ClientService {
 	@Transactional(readOnly = true)
 	public Page<ClientProjection> findAll(Pageable pageable) {
 		return clientRepository.findAllPageable(pageable);
+	}
+	
+	@Transactional(readOnly = true)
+	public Client findByUserId(Long id) {
+		return clientRepository.findByUserId(id);
 	}
 
 }
