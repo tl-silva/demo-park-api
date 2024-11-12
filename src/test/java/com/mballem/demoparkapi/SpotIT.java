@@ -8,7 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import com.mballem.demoparkapi.web.dto.ClientCreateDto;
 import com.mballem.demoparkapi.web.dto.SpotCreateDto;
+import com.mballem.demoparkapi.web.exception.ErrorMessage;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "/sql/spots/spots-insert.sql", executionPhase =  Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -63,17 +65,17 @@ public class SpotIT {
 				.jsonPath("path").isEqualTo("/api/v1/spots");
 		
 		testClient
-		.post()
-		.uri("/api/v1/spots")
-		.contentType(MediaType.APPLICATION_JSON)
-		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
-		.bodyValue(new SpotCreateDto("A-501", "RESERVED"))
-		.exchange()
-		.expectStatus().isEqualTo(422)
-		.expectBody()
-		.jsonPath("status").isEqualTo(422)
-		.jsonPath("method").isEqualTo("POST")
-		.jsonPath("path").isEqualTo("/api/v1/spots");
+				.post()
+				.uri("/api/v1/spots")
+				.contentType(MediaType.APPLICATION_JSON)
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.bodyValue(new SpotCreateDto("A-501", "RESERVED"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody()
+				.jsonPath("status").isEqualTo(422)
+				.jsonPath("method").isEqualTo("POST")
+				.jsonPath("path").isEqualTo("/api/v1/spots");
 	}
 	
 	@Test
@@ -102,6 +104,36 @@ public class SpotIT {
 				.jsonPath("status").isEqualTo(404)
 				.jsonPath("method").isEqualTo("GET")
 				.jsonPath("path").isEqualTo("/api/v1/spots/A-10");
+	}
+	
+	@Test
+	public void createSpot_WithUserNotAllowed_ReturnErrorMessageWithStatus403() {
+		testClient
+				.post()
+				.uri("/api/v1/spots")
+				.contentType(MediaType.APPLICATION_JSON)
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "nreis@email.com", "123456"))
+				.bodyValue(new SpotCreateDto("A-06", "FREE"))
+				.exchange()
+				.expectStatus().isForbidden()
+				.expectBody()
+				.jsonPath("status").isEqualTo(403)
+				.jsonPath("method").isEqualTo("POST")
+				.jsonPath("path").isEqualTo("/api/v1/spots");
+	}
+	
+	@Test
+	public void findSpot_WithUserNotAllowed_ReturnErrorMessageWithStatus403() {
+		testClient
+				.get()
+				.uri("/api/v1/spots/{code}", "A-01")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "nreis@email.com", "123456"))
+				.exchange()
+				.expectStatus().isForbidden()
+				.expectBody()
+				.jsonPath("status").isEqualTo(403)
+				.jsonPath("method").isEqualTo("GET")
+				.jsonPath("path").isEqualTo("/api/v1/spots/A-01");
 	}
 
 }

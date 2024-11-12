@@ -38,6 +38,7 @@ public class SpotController {
 	
 	@Operation(summary = "Create a new spot", description = "Resource to create a new Spot" +
 			"Request requires a Bearer Token. Restricted access to 'ADMIN' Role.",
+			security = @SecurityRequirement(name = "security"),
 			responses = {
 					@ApiResponse(responseCode = "201", description = "Resource created successfully",
 							headers = @Header(name = HttpHeaders.LOCATION, description = "Url of the created resource")),
@@ -46,7 +47,10 @@ public class SpotController {
 									schema = @Schema(implementation = ErrorMessage.class))),
 					@ApiResponse(responseCode = "422", description = "Resource not processed due to missing data or invalid data",
 							content = @Content(mediaType = "application/json;charset=UTF-8",
-									schema = @Schema(implementation = ErrorMessage.class)))
+									schema = @Schema(implementation = ErrorMessage.class))),
+					@ApiResponse(responseCode = "403", description = "Resource not allowed for Client profile",
+					content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+
 			})
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
@@ -63,13 +67,17 @@ public class SpotController {
 	
 	@Operation(summary = "Find a spot", description = "Resource to return a spot by your code" +
 			"Request requires a Bearer Token. Restricted access to 'ADMIN' Role.",
+			security = @SecurityRequirement(name = "security"),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Resource created successfully",
 							content = @Content(mediaType = "application/json;charset=UTF-8",
 									schema = @Schema(implementation = SpotResponseDto.class))),
 					@ApiResponse(responseCode = "404", description = "Spot not found",
 							content = @Content(mediaType = "application/json;charset=UTF-8",
-									schema = @Schema(implementation = ErrorMessage.class)))
+									schema = @Schema(implementation = ErrorMessage.class))),
+					@ApiResponse(responseCode = "403", description = "Resource not allowed for Client profile",
+					content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+
 			})
 	@GetMapping("/{code}")
 	@PreAuthorize("hasRole('ADMIN')")
