@@ -75,5 +75,33 @@ public class SpotIT {
 		.jsonPath("method").isEqualTo("POST")
 		.jsonPath("path").isEqualTo("/api/v1/spots");
 	}
+	
+	@Test
+	public void findSpot_WithExistingCode_ReturnSpotWithStatus200() {
+		testClient
+				.get()
+				.uri("/api/v1/spots/{code}", "A-01")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("id").isEqualTo(10)
+				.jsonPath("code").isEqualTo("A-01")
+				.jsonPath("status").isEqualTo("FREE");
+	}
+	
+	@Test
+	public void findSpot_WithNonExistingCode_ReturnErrorMessageWithStatus404() {
+		testClient
+				.get()
+				.uri("/api/v1/spots/{code}", "A-10")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.exchange()
+				.expectStatus().isNotFound()
+				.expectBody()
+				.jsonPath("status").isEqualTo(404)
+				.jsonPath("method").isEqualTo("GET")
+				.jsonPath("path").isEqualTo("/api/v1/spots/A-10");
+	}
 
 }
