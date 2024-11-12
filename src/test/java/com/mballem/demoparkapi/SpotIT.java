@@ -30,5 +30,50 @@ public class SpotIT {
 				.expectStatus().isCreated()
 				.expectHeader().exists(HttpHeaders.LOCATION);
 	}
+	
+	@Test
+	public void createSpot_WithExistingCode_ReturnErrorMessageWithStatus409() {
+		testClient
+				.post()
+				.uri("/api/v1/spots")
+				.contentType(MediaType.APPLICATION_JSON)
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.bodyValue(new SpotCreateDto("A-01", "FREE"))
+				.exchange()
+				.expectStatus().isEqualTo(409)
+				.expectBody()
+				.jsonPath("status").isEqualTo(409)
+				.jsonPath("method").isEqualTo("POST")
+				.jsonPath("path").isEqualTo("/api/v1/spots");
+	}
+	
+	@Test
+	public void createSpot_WithInvalidData_ReturnErrorMessageWithStatus422() {
+		testClient
+				.post()
+				.uri("/api/v1/spots")
+				.contentType(MediaType.APPLICATION_JSON)
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.bodyValue(new SpotCreateDto("", ""))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody()
+				.jsonPath("status").isEqualTo(422)
+				.jsonPath("method").isEqualTo("POST")
+				.jsonPath("path").isEqualTo("/api/v1/spots");
+		
+		testClient
+		.post()
+		.uri("/api/v1/spots")
+		.contentType(MediaType.APPLICATION_JSON)
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+		.bodyValue(new SpotCreateDto("A-501", "RESERVED"))
+		.exchange()
+		.expectStatus().isEqualTo(422)
+		.expectBody()
+		.jsonPath("status").isEqualTo(422)
+		.jsonPath("method").isEqualTo("POST")
+		.jsonPath("path").isEqualTo("/api/v1/spots");
+	}
 
 }
