@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.Spot;
+import com.mballem.demoparkapi.entity.Spot.SpotStatus;
 import com.mballem.demoparkapi.exception.CodeUniqueViolationException;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.repository.SpotRepository;
@@ -32,6 +33,13 @@ public class SpotService {
 	public Spot findByCode(String code) {
 		return spotRepository.findByCode(code).orElseThrow(
 				() -> new EntityNotFoundException(String.format("Spot with code '%s' was not found", code))
+		);
+	}
+
+	@Transactional(readOnly = true)
+	public Spot findByFreeSpot() {
+		return spotRepository.findFirstByStatus(SpotStatus.FREE).orElseThrow(
+				() -> new EntityNotFoundException("No free spots were found in the system")
 		);
 	}
 
