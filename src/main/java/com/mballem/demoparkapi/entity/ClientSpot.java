@@ -1,6 +1,6 @@
 package com.mballem.demoparkapi.entity;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -16,7 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,23 +25,48 @@ import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Entity
-@Table(name = "clients")
+@Table(name = "clients_have_spots")
 @EntityListeners(AuditingEntityListener.class)
-public class Client implements Serializable {
+public class ClientSpot {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "name", nullable = false, length = 100)
-	private String name;
+	@Column(name = "receipt_number", nullable = false, unique = true, length = 15)
+	private String receipt;
 	
-	@Column(name = "cpf", nullable = false, unique = true, length = 11)
-	private String cpf;
+	@Column(name = "license_plate", nullable = false, length = 8)
+	private String licensePlate;
 	
-	@OneToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	@Column(name = "brand", nullable = false, length = 45)
+	private String brand;
+	
+	@Column(name = "model", nullable = false, length = 45)
+	private String model;
+	
+	@Column(name = "color", nullable = false, length = 45)
+	private String color;
+	
+	@Column(name = "entry_date", nullable = false)
+	private LocalDateTime entryDate;
+	
+	@Column(name = "exit_date")
+	private LocalDateTime exitDate;
+	
+	@Column(name = "fee", columnDefinition = "decimal(7,2)")
+	private BigDecimal fee;
+	
+	@Column(name = "discount", columnDefinition = "decimal(7,2)")
+	private BigDecimal discount;
+	
+	@ManyToOne
+	@JoinColumn(name = "client_id", nullable = false)
+	private Client client;
+	
+	@ManyToOne
+	@JoinColumn(name = "spot_id", nullable = false)
+	private Spot spot;
 	
 	@CreatedDate
 	@Column(name = "created_date")
@@ -54,7 +79,7 @@ public class Client implements Serializable {
 	@CreatedBy
 	@Column(name = "created_by")
 	private String createdBy;
-	
+
 	@LastModifiedBy
 	@Column(name = "last_modified_by")
 	private String lastModifiedBy;
@@ -75,7 +100,7 @@ public class Client implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Client other = (Client) obj;
+		ClientSpot other = (ClientSpot) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -83,5 +108,5 @@ public class Client implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }
