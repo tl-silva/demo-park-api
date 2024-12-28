@@ -89,5 +89,52 @@ public class ParkingIT {
 		.jsonPath("path").isEqualTo("/api/v1/parkings/check-in")
 		.jsonPath("method").isEqualTo("POST");
 	}
+	
+	@Test
+	public void createCheckin_WithNonExistingCpf_ReturnErrorStatus404() {
+		ParkingCreateDto createDto = ParkingCreateDto.builder()
+				.licensePlate("WER-1111")
+				.brand("FIAT")
+				.model("PALIO 1.0")
+				.color("BLUE")
+				.clientCpf("55541407001")
+				.build();
+		
+		testClient.post().uri("/api/v1/parkings/check-in")
+		.contentType(MediaType.APPLICATION_JSON)
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+		.bodyValue(createDto)
+		.exchange()
+		.expectStatus().isNotFound()
+		.expectBody()
+		.jsonPath("status").isEqualTo("404")
+		.jsonPath("path").isEqualTo("/api/v1/parkings/check-in")
+		.jsonPath("method").isEqualTo("POST");
+	}
+	
+	@Sql(scripts = "/sql/parkings/parkings-insert-occupied-spots.sql", executionPhase =  Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(scripts = "/sql/parkings/parkings-delete-occupied-spots.sql", executionPhase =  Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	@Test
+	public void createCheckin_WithOccupiedSpots_ReturnErrorStatus404() {
+		ParkingCreateDto createDto = ParkingCreateDto.builder()
+				.licensePlate("WER-1111")
+				.brand("FIAT")
+				.model("PALIO 1.0")
+				.color("BLUE")
+				.clientCpf("19913027039")
+				.build();
+		
+		testClient.post().uri("/api/v1/parkings/check-in")
+		.contentType(MediaType.APPLICATION_JSON)
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+		.bodyValue(createDto)
+		.exchange()
+		.expectStatus().isNotFound()
+		.expectBody()
+		.jsonPath("status").isEqualTo("404")
+		.jsonPath("path").isEqualTo("/api/v1/parkings/check-in")
+		.jsonPath("method").isEqualTo("POST");
+	}
+
 
 }
