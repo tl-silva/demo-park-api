@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 @Tag(name = "Authentication", description = "Resource to proceed with API Authentication")
 @Slf4j
 @RequiredArgsConstructor
