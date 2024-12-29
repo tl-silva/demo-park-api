@@ -8,6 +8,6 @@ import com.mballem.demoparkapi.entity.ClientSpot;
 
 public interface ClientSpotRepository extends JpaRepository<ClientSpot, Long> {
 
-	Optional<ClientSpot> findByReceiptAndExitDateIsNull();
+	Optional<ClientSpot> findByReceiptAndExitDateIsNull(String receipt);
 
 }

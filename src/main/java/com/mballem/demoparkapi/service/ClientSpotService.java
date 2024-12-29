@@ -22,7 +22,7 @@ public class ClientSpotService {
 
 	@Transactional(readOnly = true)
 	public ClientSpot findByReceipt(String receipt) {
-		return clientSpotRepository.findByReceiptAndExitDateIsNull().orElseThrow(
+		return clientSpotRepository.findByReceiptAndExitDateIsNull(receipt).orElseThrow(
 				() -> new EntityNotFoundException(
 						String.format("Receipt '%s' not found in the system or checkout already completed.", receipt)
 				)

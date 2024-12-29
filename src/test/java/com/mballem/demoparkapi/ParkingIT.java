@@ -135,6 +135,43 @@ public class ParkingIT {
 		.jsonPath("path").isEqualTo("/api/v1/parkings/check-in")
 		.jsonPath("method").isEqualTo("POST");
 	}
+	
+	@Test
+	public void findCheckin_WithAdminRole_ReturnDataStatus200() {
 
+		testClient.get()
+		.uri("/api/v1/parkings/check-in/{receipt}", "20230313-101300")
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+		.exchange()
+		.expectStatus().isOk()
+		.expectBody()
+		.jsonPath("licensePlate").isEqualTo("FIT-1010")
+		.jsonPath("brand").isEqualTo("FIAT")
+		.jsonPath("model").isEqualTo("PALIO")
+		.jsonPath("color").isEqualTo("GREEN")
+		.jsonPath("clientCpf").isEqualTo("57522693004")
+		.jsonPath("receipt").isEqualTo("20230313-101300")
+		.jsonPath("entryDate").isEqualTo("2023-03-13 10:15:00")
+		.jsonPath("spotCode").isEqualTo("A-01");
+	}
+
+	@Test
+	public void findCheckin_WithClientRole_ReturnDataStatus200() {
+
+		testClient.get()
+		.uri("/api/v1/parkings/check-in/{receipt}", "20230313-101300")
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "dviana@email.com", "123456"))
+		.exchange()
+		.expectStatus().isOk()
+		.expectBody()
+		.jsonPath("licensePlate").isEqualTo("FIT-1010")
+		.jsonPath("brand").isEqualTo("FIAT")
+		.jsonPath("model").isEqualTo("PALIO")
+		.jsonPath("color").isEqualTo("GREEN")
+		.jsonPath("clientCpf").isEqualTo("57522693004")
+		.jsonPath("receipt").isEqualTo("20230313-101300")
+		.jsonPath("entryDate").isEqualTo("2023-03-13 10:15:00")
+		.jsonPath("spotCode").isEqualTo("A-01");
+	}
 
 }
