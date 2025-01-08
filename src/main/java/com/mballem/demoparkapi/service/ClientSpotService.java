@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.ClientSpot;
+import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.repository.ClientSpotRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,15 @@ public class ClientSpotService {
 	@Transactional
 	public ClientSpot save(ClientSpot clientSpot) {
 		return clientSpotRepository.save(clientSpot);
+	}
+
+	@Transactional(readOnly = true)
+	public ClientSpot findByReceipt(String receipt) {
+		return clientSpotRepository.findByReceiptAndExitDateIsNull(receipt).orElseThrow(
+				() -> new EntityNotFoundException(
+						String.format("Receipt '%s' not found in the system or checkout already completed.", receipt)
+				)
+		);
 	}
 
 }

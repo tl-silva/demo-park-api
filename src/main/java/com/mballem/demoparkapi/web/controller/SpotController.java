@@ -69,7 +69,7 @@ public class SpotController {
 			"Request requires a Bearer Token. Restricted access to 'ADMIN' Role.",
 			security = @SecurityRequirement(name = "security"),
 			responses = {
-					@ApiResponse(responseCode = "200", description = "Resource created successfully",
+					@ApiResponse(responseCode = "200", description = "Resource located successfully",
 							content = @Content(mediaType = "application/json;charset=UTF-8",
 									schema = @Schema(implementation = SpotResponseDto.class))),
 					@ApiResponse(responseCode = "404", description = "Spot not found",
