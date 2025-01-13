@@ -1,5 +1,6 @@
 package com.mballem.demoparkapi.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -32,6 +33,26 @@ public class ParkingService {
 		clientSpot.setEntryDate(LocalDateTime.now());
 		
 		clientSpot.setReceipt(ParkingUtils.issueReceipt());
+		
+		return clientSpotService.save(clientSpot);
+	}
+
+	@Transactional
+	public ClientSpot checkOut(String receipt) {
+		ClientSpot clientSpot = clientSpotService.findByReceipt(receipt);
+		
+		LocalDateTime exitDate = LocalDateTime.now();
+		
+		BigDecimal value = ParkingUtils.calculateCost(clientSpot.getEntryDate(), exitDate);
+		clientSpot.setFee(value);
+		
+		long totalTimes = clientSpotService.getTotalTimesParkingFull(clientSpot.getClient().getCpf());
+		
+		BigDecimal discount = ParkingUtils.calculateDiscount(value, totalTimes);
+		clientSpot.setDiscount(discount);
+		
+		clientSpot.setExitDate(exitDate);
+		clientSpot.getSpot().setStatus(Spot.SpotStatus.FREE);
 		
 		return clientSpotService.save(clientSpot);
 	}

@@ -10,4 +10,6 @@ public interface ClientSpotRepository extends JpaRepository<ClientSpot, Long> {
 
 	Optional<ClientSpot> findByReceiptAndExitDateIsNull(String receipt);
 
+	long countByClientCpfAndExitDateIsNotNull(String cpf);
+
 }

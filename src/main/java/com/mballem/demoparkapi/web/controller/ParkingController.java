@@ -1,5 +1,7 @@
 package com.mballem.demoparkapi.web.controller;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+
 import java.net.URI;
 
 import org.springframework.http.HttpHeaders;
@@ -8,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +34,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 
 @Tag(name = "Parkings", description = "Operations to register the entry and exit of a vehicle from the parking lot.")
 @RequiredArgsConstructor
@@ -95,6 +96,14 @@ public class ParkingController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
     public ResponseEntity<ParkingResponseDto> getByReceipt(@PathVariable String receipt){
     	ClientSpot clientSpot = clientSpotService.findByReceipt(receipt);
+    	ParkingResponseDto dto = ClientSpotMapper.toDto(clientSpot);
+    	return ResponseEntity.ok(dto);
+    }
+    
+    @PutMapping("/check-out/{receipt}")
+	@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ParkingResponseDto> checkout(@PathVariable String receipt){
+    	ClientSpot clientSpot = parkingService.checkOut(receipt);
     	ParkingResponseDto dto = ClientSpotMapper.toDto(clientSpot);
     	return ResponseEntity.ok(dto);
     }
