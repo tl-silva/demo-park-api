@@ -209,5 +209,33 @@ public class ParkingIT {
 		.jsonPath("fee").exists()
 		.jsonPath("discount").exists();
 	}
+	
+	@Test
+	public void createCheckOut_WithNonExistingReceipt_ReturnErrorStatus404() {
+
+		testClient.put()
+		.uri("/api/v1/parkings/check-out/{receipt}", "20250113-999999")
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+		.exchange()
+		.expectStatus().isNotFound()
+		.expectBody()
+		.jsonPath("status").isEqualTo("404")
+		.jsonPath("path").isEqualTo("/api/v1/parkings/check-out/20250113-999999")
+		.jsonPath("method").isEqualTo("PUT");
+	}
+	
+	@Test
+	public void createCheckOut_WithClientRole_ReturnErrorStatus403() {
+
+		testClient.put()
+		.uri("/api/v1/parkings/check-out/{receipt}", "20250113-101300")
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "dviana@email.com", "123456"))
+		.exchange()
+		.expectStatus().isForbidden()
+		.expectBody()
+		.jsonPath("status").isEqualTo("403")
+		.jsonPath("path").isEqualTo("/api/v1/parkings/check-out/20250113-101300")
+		.jsonPath("method").isEqualTo("PUT");
+	}
 
 }
