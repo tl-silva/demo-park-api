@@ -1,6 +1,7 @@
 package com.mballem.demoparkapi.web.controller;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 import java.net.URI;
 
@@ -11,6 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mballem.demoparkapi.entity.ClientSpot;
+import com.mballem.demoparkapi.jwt.JwtUserDetails;
 import com.mballem.demoparkapi.repository.projection.ClientSpotProjection;
 import com.mballem.demoparkapi.service.ClientSpotService;
 import com.mballem.demoparkapi.service.ParkingService;
@@ -42,7 +45,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @Tag(name = "Parkings", description = "Operations to register the entry and exit of a vehicle from the parking lot.")
 @RequiredArgsConstructor
@@ -166,9 +168,20 @@ public class ParkingController {
     public ResponseEntity<PageableDto> getAllParkingsByCpf(@PathVariable String cpf,
     													   @PageableDefault(size = 5, sort = "entryDate",
     													   direction = Sort.Direction.ASC) Pageable pageable) {
+    	
     	Page<ClientSpotProjection> projection = clientSpotService.findAllByClientCpf(cpf, pageable);
     	PageableDto dto = PageableMapper.toDto(projection);
     	return ResponseEntity.ok(dto);
     }
-
+    
+    @GetMapping()
+	@PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<PageableDto> getAllClientParkings(@AuthenticationPrincipal JwtUserDetails user,
+    													    @PageableDefault(size = 5, sort = "entryDate",
+    													    direction = Sort.Direction.ASC) Pageable pageable) {
+    	
+    	Page<ClientSpotProjection> projection = clientSpotService.findAllByUserId(user.getId(), pageable);
+    	PageableDto dto = PageableMapper.toDto(projection);
+    	return ResponseEntity.ok(dto);
+    }
 }

@@ -42,4 +42,9 @@ public class ClientSpotService {
 		return clientSpotRepository.findAllByClientCpf(cpf, pageable);
 	}
 
+	@Transactional(readOnly = true)
+	public Page<ClientSpotProjection> findAllByUserId(Long id, Pageable pageable) {
+		return clientSpotRepository.findAllByClientUserId(id, pageable);
+	}
+
 }
