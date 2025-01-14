@@ -1,11 +1,14 @@
 package com.mballem.demoparkapi.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.ClientSpot;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.repository.ClientSpotRepository;
+import com.mballem.demoparkapi.repository.projection.ClientSpotProjection;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +35,11 @@ public class ClientSpotService {
 	@Transactional(readOnly = true)
 	public long getTotalTimesParkingFull(String cpf) {
 		return clientSpotRepository.countByClientCpfAndExitDateIsNotNull(cpf);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<ClientSpotProjection> findAllByClientCpf(String cpf, Pageable pageable) {
+		return clientSpotRepository.findAllByClientCpf(cpf, pageable);
 	}
 
 }
