@@ -285,4 +285,49 @@ public class ParkingIT {
 				.jsonPath("method").isEqualTo("GET");
 	}
 
+	@Test
+	public void findParkings_OfLoggedClientWithClientRole_ReturnSucess() {
+
+		PageableDto responseBody = testClient.get()
+				.uri("/api/v1/parkings?size=1&page=0")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "dviana@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(PageableDto.class)
+				.returnResult().getResponseBody();
+		
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+			
+		responseBody = testClient.get()
+				.uri("/api/v1/parkings?size=1&page=1")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "dviana@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(PageableDto.class)
+				.returnResult().getResponseBody();
+				
+		org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+		org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+		org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+	}
+	
+	@Test
+	public void findParkings_OfLoggedClientWithAdminRole_ReturnErrorStatus403() {
+
+		testClient.get()
+				.uri("/api/v1/parkings")
+				.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+				.exchange()
+				.expectStatus().isForbidden()
+				.expectBody()
+				.jsonPath("status").isEqualTo("403")
+				.jsonPath("path").isEqualTo("/api/v1/parkings")
+				.jsonPath("method").isEqualTo("GET");
+	}
 }
