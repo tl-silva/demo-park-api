@@ -140,7 +140,7 @@ public class ParkingIT {
 	public void findCheckin_WithAdminRole_ReturnDataStatus200() {
 
 		testClient.get()
-		.uri("/api/v1/parkings/check-in/{receipt}", "20230313-101300")
+		.uri("/api/v1/parkings/check-in/{receipt}", "20250113-101300")
 		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
 		.exchange()
 		.expectStatus().isOk()
@@ -150,8 +150,8 @@ public class ParkingIT {
 		.jsonPath("model").isEqualTo("PALIO")
 		.jsonPath("color").isEqualTo("GREEN")
 		.jsonPath("clientCpf").isEqualTo("57522693004")
-		.jsonPath("receipt").isEqualTo("20230313-101300")
-		.jsonPath("entryDate").isEqualTo("2023-03-13 10:15:00")
+		.jsonPath("receipt").isEqualTo("20250113-101300")
+		.jsonPath("entryDate").isEqualTo("2025-01-13 10:15:00")
 		.jsonPath("spotCode").isEqualTo("A-01");
 	}
 
@@ -159,7 +159,7 @@ public class ParkingIT {
 	public void findCheckin_WithClientRole_ReturnDataStatus200() {
 
 		testClient.get()
-		.uri("/api/v1/parkings/check-in/{receipt}", "20230313-101300")
+		.uri("/api/v1/parkings/check-in/{receipt}", "20250113-101300")
 		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "dviana@email.com", "123456"))
 		.exchange()
 		.expectStatus().isOk()
@@ -169,8 +169,8 @@ public class ParkingIT {
 		.jsonPath("model").isEqualTo("PALIO")
 		.jsonPath("color").isEqualTo("GREEN")
 		.jsonPath("clientCpf").isEqualTo("57522693004")
-		.jsonPath("receipt").isEqualTo("20230313-101300")
-		.jsonPath("entryDate").isEqualTo("2023-03-13 10:15:00")
+		.jsonPath("receipt").isEqualTo("20250113-101300")
+		.jsonPath("entryDate").isEqualTo("2025-01-13 10:15:00")
 		.jsonPath("spotCode").isEqualTo("A-01");
 	}
 	
@@ -178,14 +178,36 @@ public class ParkingIT {
 	public void findCheckin_WithNonExistingReceipt_ReturnErrorStatus404() {
 
 		testClient.get()
-		.uri("/api/v1/parkings/check-in/{receipt}", "20230313-999999")
+		.uri("/api/v1/parkings/check-in/{receipt}", "20250113-999999")
 		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "dviana@email.com", "123456"))
 		.exchange()
 		.expectStatus().isNotFound()
 		.expectBody()
 		.jsonPath("status").isEqualTo("404")
-		.jsonPath("path").isEqualTo("/api/v1/parkings/check-in/20230313-999999")
+		.jsonPath("path").isEqualTo("/api/v1/parkings/check-in/20250113-999999")
 		.jsonPath("method").isEqualTo("GET");
+	}
+	
+	@Test
+	public void createCheckOut_WithExistingReceipt_ReturnSucess() {
+
+		testClient.put()
+		.uri("/api/v1/parkings/check-out/{receipt}", "20250113-101300")
+		.headers(JwtAuthentication.getHeaderAuthorization(testClient, "celler@email.com", "123456"))
+		.exchange()
+		.expectStatus().isOk()
+		.expectBody()
+		.jsonPath("licensePlate").isEqualTo("FIT-1010")
+		.jsonPath("brand").isEqualTo("FIAT")
+		.jsonPath("model").isEqualTo("PALIO")
+		.jsonPath("color").isEqualTo("GREEN")
+		.jsonPath("entryDate").isEqualTo("2025-01-13 10:15:00")
+		.jsonPath("clientCpf").isEqualTo("57522693004")
+		.jsonPath("spotCode").isEqualTo("A-01")
+		.jsonPath("receipt").isEqualTo("20250113-101300")
+		.jsonPath("exitDate").exists()
+		.jsonPath("fee").exists()
+		.jsonPath("discount").exists();
 	}
 
 }
