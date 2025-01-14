@@ -137,8 +137,8 @@ public class ParkingController {
     	return ResponseEntity.ok(dto);
     }
     
-    @Operation(summary = "Find Customer parking records by CPF", description = "Find " +
-            "Customer parking records by CPF. Request requires a Bearer Token.",
+    @Operation(summary = "Find Client parking records by CPF", description = "Find " +
+            "Client parking records by CPF. Request requires a Bearer Token.",
             security = @SecurityRequirement(name = "security"),
             parameters = {
                     @Parameter(in = PATH, name = "cpf", description = "CPF number for the client to be consulted",
@@ -174,6 +174,31 @@ public class ParkingController {
     	return ResponseEntity.ok(dto);
     }
     
+    @Operation(summary = "Find the logged in Client's parking records",
+            description = "Find the logged in Client's parking records. " +
+                    "Request requires a Bearer Token.",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {
+                    @Parameter(in = QUERY, name = "page",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
+                            description = "Represents the returned page"
+                    ),
+                    @Parameter(in = QUERY, name = "size",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "5")),
+                            description = "Represents the total number of elements per page"
+                    ),
+                    @Parameter(in = QUERY, name = "sort", hidden = true,
+                            array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "entryDate,asc")),
+                            description = "Default sort field 'entryDate,asc'. ")
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource located successfully",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ParkingResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Resource not allowed for Admin profile",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @GetMapping()
 	@PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<PageableDto> getAllClientParkings(@AuthenticationPrincipal JwtUserDetails user,
