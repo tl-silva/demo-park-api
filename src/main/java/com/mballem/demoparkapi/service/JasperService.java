@@ -33,7 +33,7 @@ public class JasperService {
 	private static final String JASPER_DIRECTORY = "classpath:reports/";
 	
 	public void addParams(String key, Object value) {
-		this.params.put("IMAGE_DIRECTORY", JASPER_DIRECTORY);
+		this.params.put("image_directory", JASPER_DIRECTORY);
 		this.params.put("REPORT_LOCALE", new Locale("pt", "BR"));
 		this.params.put(key, value);
 	}

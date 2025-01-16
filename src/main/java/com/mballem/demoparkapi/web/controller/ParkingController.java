@@ -217,7 +217,7 @@ public class ParkingController {
     	return ResponseEntity.ok(dto);
     }
     
-    @GetMapping("/reports")
+    @GetMapping("/report")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> getReport(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException{
     	String cpf = clientService.findByUserId(user.getId()).getCpf();
