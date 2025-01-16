@@ -34,7 +34,7 @@ public class JasperService {
 	
 	public void addParams(String key, Object value) {
 		this.params.put("image_directory", JASPER_DIRECTORY);
-		this.params.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		this.params.put("REPORT_LOCALE", Locale.of("pt", "BR"));
 		this.params.put(key, value);
 	}
 	
