@@ -1,5 +1,6 @@
 package com.mballem.demoparkapi.web.exception;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,15 @@ import com.mballem.demoparkapi.exception.PasswordInvalidException;
 import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class ApiExceptionHandler {
+	
+	private final MessageSource messageSource;
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ErrorMessage> accessDeniedException(AccessDeniedException ex, HttpServletRequest request){
@@ -66,7 +71,8 @@ public class ApiExceptionHandler {
 		return ResponseEntity
 				.status(HttpStatus.UNPROCESSABLE_ENTITY)
 				.contentType(MediaType.APPLICATION_JSON)
-				.body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Invalid field(s)", result));
+				.body(new ErrorMessage(
+						request, HttpStatus.UNPROCESSABLE_ENTITY, messageSource.getMessage("message.invalid.field", null, request.getLocale()), result, messageSource));
 	}
 	
 	@ExceptionHandler(Exception.class)
