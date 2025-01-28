@@ -11,12 +11,12 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UserCreateDto {
 	
-	@NotBlank
-	@Email(message = "Email format is invalid", regexp = "^[a-z0-9.+-]+@[a-z0-9.-]+\\.[a-z]{2,}$")
+	@NotBlank(message = "{NotBlank.userCreateDto.username}")
+	@Email(regexp = "^[a-z0-9.+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", message = "{Email.userCreateDto.username}")
 	private String username;
 	
-	@NotBlank
-	@Size(min = 6, max = 6)
+	@NotBlank(message = "{NotBlank.userCreateDto.password}")
+	@Size(min = 6, max = 6, message= "{Size.userCreateDto.password}")
 	private String password;
 
 }

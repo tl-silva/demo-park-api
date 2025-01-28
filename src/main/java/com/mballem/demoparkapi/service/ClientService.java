@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.Client;
+import com.mballem.demoparkapi.exception.ClientCpfNotFoundException;
+import com.mballem.demoparkapi.exception.ClientIdNotFoundException;
 import com.mballem.demoparkapi.exception.CpfUniqueViolationException;
-import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.repository.ClientRepository;
 import com.mballem.demoparkapi.repository.projection.ClientProjection;
 
@@ -25,16 +26,14 @@ public class ClientService {
 		try {
 			return clientRepository.save(client);
 		} catch(DataIntegrityViolationException ex) {
-			throw new CpfUniqueViolationException(
-					String.format("CPF '%s' already registered", client.getCpf()));
+			throw new CpfUniqueViolationException("CPF", client.getCpf());
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public Client findById(Long id) {
 		return clientRepository.findById(id).orElseThrow(
-		() -> new EntityNotFoundException(String.format("Client id=%s not found", id))
-		);
+		() -> new ClientIdNotFoundException(id.toString()));
 	}
 
 	@Transactional(readOnly = true)
@@ -50,8 +49,7 @@ public class ClientService {
 	@Transactional(readOnly = true)
 	public Client findByCpf(String cpf) {
 		return clientRepository.findByCpf(cpf).orElseThrow(
-				() -> new EntityNotFoundException(String.format("Client with CPF '%s' not found", cpf))
-		);
+				() -> new ClientCpfNotFoundException(cpf));
 	}
 
 }

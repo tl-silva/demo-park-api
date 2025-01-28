@@ -10,16 +10,16 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UserPasswordDto {
 	
-	@NotBlank
-	@Size(min = 6, max = 6)
+	@NotBlank(message = "{NotBlank.userPasswordDto.currentPassword}")
+	@Size(min = 6, max = 6, message = "{Size.userPasswordDto.currentPassword}")
 	private String currentPassword;
 	
-	@NotBlank
-	@Size(min = 6, max = 6)
+	@NotBlank(message = "{NotBlank.userPasswordDto.newPassword}")
+	@Size(min = 6, max = 6, message = "{Size.userPasswordDto.newPassword}")
 	private String newPassword;
 	
-	@NotBlank
-	@Size(min = 6, max = 6)
+	@NotBlank(message = "{NotBlank.userPasswordDto.confirmPassword}")
+	@Size(min = 6, max = 6, message = "{Size.userPasswordDto.confirmPassword}")
 	private String confirmPassword;
 
 }

@@ -13,12 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor @AllArgsConstructor
 public class ClientCreateDto {
 	
-	@NotBlank
-	@Size(min = 5, max = 100)
+	@NotBlank(message = "{NotBlank.clientCreateDto.name}")
+	@Size(min = 5, max = 100, message = "{Size.clientCreateDto.name}")
 	private String name;
 	
-	@CPF
-	@Size(min = 11, max = 11)
+	@CPF(message = "{CPF.clientCreateDto.cpf}")
+	@Size(min = 11, max = 11, message = "{Size.clientCreateDto.cpf}")
 	private String cpf;
 
 }

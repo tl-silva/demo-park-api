@@ -85,5 +85,5 @@ public class SpotController {
 		Spot spot = spotService.findByCode(code);
 		return ResponseEntity.ok(SpotMapper.toDto(spot));
 	}
-
+	
 }

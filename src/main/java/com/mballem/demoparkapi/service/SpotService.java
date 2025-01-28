@@ -6,8 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mballem.demoparkapi.entity.Spot;
 import com.mballem.demoparkapi.entity.Spot.SpotStatus;
+import com.mballem.demoparkapi.exception.AvailableSpotException;
 import com.mballem.demoparkapi.exception.CodeUniqueViolationException;
-import com.mballem.demoparkapi.exception.EntityNotFoundException;
+import com.mballem.demoparkapi.exception.SpotCodeNotFoundException;
 import com.mballem.demoparkapi.repository.SpotRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,24 +24,20 @@ public class SpotService {
 		try {
 			return spotRepository.save(spot);
 		} catch (DataIntegrityViolationException ex) {
-			throw new CodeUniqueViolationException(
-					String.format("Spot with code '%s' already registered", spot.getCode())
-			);
+			throw new CodeUniqueViolationException(spot.getCode());
 		}
 	}
 	
 	@Transactional(readOnly = true)
 	public Spot findByCode(String code) {
 		return spotRepository.findByCode(code).orElseThrow(
-				() -> new EntityNotFoundException(String.format("Spot with code '%s' was not found", code))
-		);
+				() -> new SpotCodeNotFoundException(code.toString()));
 	}
 
 	@Transactional(readOnly = true)
 	public Spot findByFreeSpot() {
 		return spotRepository.findFirstByStatus(SpotStatus.FREE).orElseThrow(
-				() -> new EntityNotFoundException("No free spots were found in the system")
-		);
+				() -> new AvailableSpotException());
 	}
 
 }

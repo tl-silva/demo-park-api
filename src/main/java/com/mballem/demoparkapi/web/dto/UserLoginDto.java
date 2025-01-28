@@ -16,12 +16,12 @@ import lombok.ToString;
 @ToString
 public class UserLoginDto {
 	
-	@NotBlank
-	@Email(message = "Email format is invalid", regexp = "^[a-z0-9.+-]+@[a-z0-9.-]+\\.[a-z]{2,}$")
+	@NotBlank(message = "{NotBlank.userLoginDto.username}")
+	@Email(regexp = "^[a-z0-9.+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", message = "{Email.userLoginDto.username}" )
 	private String username;
 	
-	@NotBlank
-	@Size(min = 6, max = 6)
+	@NotBlank(message = "{NotBlank.userLoginDto.password}")
+	@Size(min = 6, max = 6, message = "{Size.userLoginDto.password}")
 	private String password;
 	
 	

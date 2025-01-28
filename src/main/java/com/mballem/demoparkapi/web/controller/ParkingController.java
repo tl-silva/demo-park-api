@@ -217,6 +217,18 @@ public class ParkingController {
     	return ResponseEntity.ok(dto);
     }
     
+    @Operation(summary = "PDF report with Client parking lots",
+            description = "Resource to generate a Report with the Client's parking lots. " +
+                    "Request requires a Bearer Token.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Report generated successfully",
+                            content = @Content(mediaType = "application/pdf",
+                                    schema = @Schema(implementation = ParkingResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Resource not allowed for Admin profile",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @GetMapping("/report")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> getReport(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException{

@@ -3,11 +3,11 @@ package com.mballem.demoparkapi.exception;
 import lombok.Getter;
 
 @Getter
-public class UsernameUniqueViolationException extends RuntimeException {
-
+public class UsernameNotFoundException  extends RuntimeException {
+	
 	private String username;
-
-	public UsernameUniqueViolationException(String username) {
+	
+	public UsernameNotFoundException(String username) {
 		this.username = username;
 	}
 
